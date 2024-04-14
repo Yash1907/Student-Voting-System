@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container col-xl-10 col-xxl-8 px-4 py-5">
+  <div class="row align-items-center g-lg-5 py-5">
+    <div class="col-lg-7 text-center text-lg-start">
+      <h1 class="display-4 fw-bold lh-1 mb-3">Run for Student President!</h1>
+      <p class="col-lg-10 fs-4">Enter your name, your email, the position you would like to run for, and your slogan to run for the election!</p>
+    </div>
+    <div class="col-md-10 mx-auto col-lg-5">
+      <form class="p-4 p-md-5 border rounded-3 bg-light">
+        <div class="form-floating mb-3">
+          <input type="text" class="form-control" id="floatingName" placeholder="John Smith">
+          <label for="floatingName">Name</label>
+        </div>
+        <div class="form-floating mb-3">
+          <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+          <label for="floatingInput">Email Address</label>
+        </div>
+        <!-- <div class="form-floating mb-3">
+          <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
+          <label for="floatingPassword">Password</label>
+        </div> -->
+        <div class="mb-3">
+          <select class="form-select" aria-label="Select Position">
+            <option selected>Select Position</option>
+            <option value="President">President</option>
+          </select>
+        </div>
+        <div class="form-floating mb-3">
+          <input type="text" class="form-control" id="floatingSlogan" placeholder="Make college great again.">
+          <label for="floatingSlogan">Slogan</label>
+        </div>
+        <button class="w-100 btn btn-lg btn-primary" type="submit">Sign up</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row my-3 d-flex justify-content-center">
+  {% for candidate in candidates %}
+  <div class="card col-md-4 col-sm-6 col-xs-6 mx-3" style="width: 18rem;">
+    <div class="card-body">
+      <h5 class="card-title">{{candidate.name}}</h5>
+      <h6 class="card-subtitle mb-2 text-muted">{{candidate.position}}</h6>
+      <p class="card-text">{{candidate.slogan}}</p>
+      {% if voted %}
+      <button class="btn btn-primary disabled">Vote</button>
+      {% else %}
+      <button class="btn btn-primary">Vote</button>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock content %}

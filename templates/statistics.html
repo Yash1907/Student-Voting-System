@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+<div>
+  <canvas id="myChart"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const ctx = document.getElementById('myChart');
+  var data = "{{ votes }}";
+  data = JSON.parse(data.replace(/'/g, '"'));
+  var candidates = "{{ names|safe }}";
+  candidates = JSON.parse(candidates.replace(/'/g, '"'));
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: candidates,
+      datasets: [{
+        label: '# of Votes',
+        data: data,
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+</script>
+{% endblock content %}
