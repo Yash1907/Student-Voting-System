@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-<div>
+<div class="chart-container" style="position: relative; height:90vh;">
   <canvas id="myChart"></canvas>
 </div>
 
@@ -22,9 +22,21 @@
       }]
     },
     options: {
-      scales: {
-        y: {
-          beginAtZero: true
+      responsive: true,
+      resizeDelay:0.5,
+      indexAxis: 'y',
+      plugins: {
+        legend: {
+          position: 'right',
+        },
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        },
+        title: {
+          display: true,
+          text: 'Votes per Candidate'
         }
       }
     }
