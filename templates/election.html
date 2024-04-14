@@ -1,30 +1,36 @@
 {% extends 'base.html' %}
 {% block content %}
-{% if not runningForPresident %}
+<div>
+  {% if message is defined and message %}
+  <div class="alert alert-warning"> <strong> {{ message }}</strong></div>
+  {% endif %}
+  {% if not runningForPresident %}
   <div class="container col-xl-10 col-xxl-8 px-4 py-5">
     <div class="row align-items-center g-lg-5 py-5">
       <div class="col-lg-7 text-center text-lg-start">
-        <h1 class="display-4 fw-bold lh-1 mb-3">Run for Student President!</h1>
-        <p class="col-lg-10 fs-4">Enter your name, your email, the position you would like to run for, and your slogan to run for the election!</p>
+        <h1 class="display-4 fw-bold lh-1 mb-3">Welcome {{name}}! Run for Student President!</h1>
+        <p class="col-lg-10 fs-4">Enter the position you would like to run for, and your slogan
+          to run for the election!</p>
       </div>
       <div class="col-md-10 mx-auto col-lg-5">
-        <form class="p-4 p-md-5 border rounded-3 bg-light">
+        <form class="p-4 p-md-5 border rounded-3 bg-light" action="{{ url_for('election') }}" method="post">
           <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="floatingName">
+            <input type="text" class="form-control" id="floatingName" name="name" value={{name}} placeholder="name">
             <label for="floatingName">Name</label>
           </div>
           <div class="form-floating mb-3">
-            <input type="email" class="form-control" id="floatingInput">
+            <input type="email" class="form-control" id="floatingInput" name="email" value={{email}}
+              placeholder="email">
             <label for="floatingInput">Email Address</label>
           </div>
           <div class="mb-3">
-            <select class="form-select" aria-label="Select Position">
+            <select class="form-select" aria-label="Select Position" name="position">
               <option selected>Select Position</option>
               <option value="President">President</option>
             </select>
           </div>
           <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="floatingSlogan">
+            <input type="text" class="form-control" id="floatingSlogan" name="slogan">
             <label for="floatingSlogan">Slogan</label>
           </div>
           <button class="w-100 btn btn-lg btn-primary" type="submit">Sign up</button>
@@ -32,16 +38,18 @@
       </div>
     </div>
   </div>
-{% else %}
+  {% else %}
   <div class="px-4 py-5 my-5 text-center">
     <h1 class="display-5 fw-bold">You are already running for President!</h1>
     <div class="col-lg-6 mx-auto">
       <p class="lead mb-4">You can check the statistics of the election and vote for a candidate!</p>
       <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
         <a href="/voting"><button type="button" class="btn btn-primary btn-lg px-4 gap-3">Vote</button></a>
-        <a href="/statistics"><button type="button" class="btn btn-outline-secondary btn-lg px-4">Statistics</button></a>
+        <a href="/statistics"><button type="button"
+            class="btn btn-outline-secondary btn-lg px-4">Statistics</button></a>
       </div>
     </div>
   </div>
-{% endif %}
+  {% endif %}
+</div>
 {% endblock content %}

@@ -1,42 +1,50 @@
 {% extends 'base.html' %}
 {% block content %}
-  <div class="px-4 py-5 my-2">
-    <form>
-      <div class="form-group lead mx-auto mb-4">
-        <label for="inputName" class="fw-bold">Name</label>
-        <input type="text" class="form-control w-50" id="inputName" aria-describedby="name" placeholder="Enter name">
-      </div>
-      <div class="form-group lead mx-auto mb-4">
-        <label for="inputEmail" class="fw-bold">Email address</label>
-        <input type="email" class="form-control w-50" id="inputEmail" aria-describedby="email" placeholder="Enter email">
-      </div>
-      <div class="form-group lead mx-auto mb-4">
-        <label for="inputPassword" class="fw-bold">Password</label>
-        <input type="password" class="form-control w-50" id="inputPassword" placeholder="Password">
-      </div>
-      <div class="form-group lead mx-auto mb-4">
-        <label for="inputRepassword" class="fw-bold">Re-enter Password</label>
-        <input type="password" class="form-control w-50" id="inputRepassword" placeholder="Re-enter Password">
-      </div>
-      <div class="form-group form-check mb-4">
-        <input type="checkbox" class="form-check-input" id="councilCheck" onchange="toggleCouncilCode()">
-        <label class="form-check-label" for="councilCheck">Are you a Council Member?</label>
-      </div>
-      <div class="form-group lead mx-auto mb-4" id="councilCodeDiv" style="display:none;">
-        <label for="councilCode" class="fw-bold">Council member code</label>
-        <input type="text" class="form-control w-50" id="councilCode" aria-describedby="councilCode" placeholder="Enter Council Member Code">
-      </div>
-      <div class="form-group form-link mx-auto mb-3">
-        <a href="/login">Already Signed up? Log in!</a>
-      </div>
-      <a href="/"><button type="submit" class="btn btn-primary">Submit</button></a>
-    </form>
+<div class="px-4 py-4">
+  {% if message is defined and message %}
+  <div class="alert alert-warning"> <strong> {{ message }}</strong></div>
+  {% endif %}
+  <form action="{{ url_for('signup') }}" method="post">
+    <div class="form-group lead mx-auto mb-3">
+      <label for="inputName" class="fw-bold">Name</label>
+      <input type="text" class="form-control w-50" id="inputName" name="name" aria-describedby="name"
+        placeholder="Enter name">
+    </div>
+    <div class="form-group lead mx-auto mb-3">
+      <label for="inputEmail" class="fw-bold">Email address</label>
+      <input type="email" class="form-control w-50" id="inputEmail" name="email" aria-describedby="email"
+        placeholder="Enter email">
+    </div>
+    <div class="form-group lead mx-auto mb-3">
+      <label for="inputPassword" class="fw-bold">Password</label>
+      <input type="password" class="form-control w-50" id="inputPassword" name="password" placeholder="Password">
+    </div>
+    <div class="form-group lead mx-auto mb-3">
+      <label for="inputRepassword" class="fw-bold">Re-enter Password</label>
+      <input type="password" class="form-control w-50" id="inputRepassword" name="repassword"
+        placeholder="Re-enter Password">
+    </div>
+    <div class="form-group form-check mb-3">
+      <input type="checkbox" class="form-check-input" id="councilCheck" name="isCouncilMember"
+        onchange="toggleCouncilCode()">
+      <label class="form-check-label" for="councilCheck">Are you a Council Member?</label>
+    </div>
+    <div class="form-group lead mx-auto mb-3" id="councilCodeDiv" style="display:none;">
+      <label for="councilCode" class="fw-bold">Council member code</label>
+      <input type="text" class="form-control w-50" id="councilCode" name="councilMemberCode"
+        aria-describedby="councilCode" placeholder="Enter Council Member Code">
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+  <div class="form-group form-link mx-auto mb-3">
+    <a href="/login">Already Signed up? Log in!</a>
   </div>
-  <script>
-    function toggleCouncilCode() {
-      var checkbox = document.getElementById('councilCheck');
-      var councilCodeDiv = document.getElementById('councilCodeDiv');
-      councilCodeDiv.style.display = checkbox.checked ? 'block' : 'none';
-    }
-  </script>
+</div>
+<script>
+  function toggleCouncilCode() {
+    var checkbox = document.getElementById('councilCheck');
+    var councilCodeDiv = document.getElementById('councilCodeDiv');
+    councilCodeDiv.style.display = checkbox.checked ? 'block' : 'none';
+  }
+</script>
 {% endblock content %}

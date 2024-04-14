@@ -1,16 +1,17 @@
 {% extends 'base.html' %}
 {% block content %}
 {% if not loggedIn %}
-  <div class="px-4 py-5 my-5 text-center">
-    <h1 class="display-5 fw-bold">Student Voting System</h1>
-    <div class="col-lg-6 mx-auto">
-      <p class="lead mb-4">Sign up as a student and vote for Student Council President or sign up as a Council member and run for President!</p>
-      <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-        <a href="/signup"><button type="button" class="btn btn-primary btn-lg px-4 gap-3">Sign up</button></a>
-        <a href="/login"><button type="button" class="btn btn-outline-secondary btn-lg px-4">Log in</button></a>
-      </div>
+<div class="px-4 py-5 my-5 text-center">
+  <h1 class="display-5 fw-bold">Student Voting System</h1>
+  <div class="col-lg-6 mx-auto">
+    <p class="lead mb-4">Sign up as a student and vote for Student Council President or sign up as a Council member and
+      run for President!</p>
+    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+      <a href="/signup"><button type="button" class="btn btn-primary btn-lg px-4 gap-3">Sign up</button></a>
+      <a href="/login"><button type="button" class="btn btn-outline-secondary btn-lg px-4">Log in</button></a>
     </div>
   </div>
+</div>
 {% else %}
 <div class="px-4 py-5 my-5 text-center">
   <!-- <img class="d-block mx-auto mb-4" src="/docs/5.1/assets/brand/bootstrap-logo.svg" alt="" width="72" height="57"> -->
@@ -22,10 +23,14 @@
     <p class="lead mb-4">Vote for the new President or view statistics of the current election!</p>
     {% endif %}
     <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+      {% if not voted %}
       <a href="/voting"><button type="button" class="btn btn-primary btn-lg px-4 gap-3">Vote</button></a>
-      <a href="/statistics"><button type="button" class="btn btn-outline-secondary btn-lg px-4">View Statistics</button></a>
-      {% if council %}
-      <a href="/election"><button type="button" class="btn btn-outline-secondary btn-lg px-4">Run for President</button></a>
+      {% endif %}
+      <a href="/statistics"><button type="button" class="btn btn-outline-secondary btn-lg px-4">View
+          Statistics</button></a>
+      {% if council and not runningForPresident %}
+      <a href="/election"><button type="button" class="btn btn-outline-secondary btn-lg px-4">Run for
+          President</button></a>
       {% endif %}
     </div>
   </div>
