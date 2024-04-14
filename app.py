@@ -3,7 +3,7 @@ from flask import Flask, render_template
 
 app = Flask(__name__)
 loggedIn = True
-
+runningForPresident = False
 @app.route('/')
 def index():
     data = {'name':'John','email':'John@gmail.com'}
@@ -28,6 +28,6 @@ def statistics():
     return render_template('statistics.html', votes=votes, names=names, loggedIn = loggedIn)
 @app.route('/election')
 def election():
-    return render_template('election.html', loggedIn = loggedIn)
+    return render_template('election.html', loggedIn = loggedIn, runningForPresident = runningForPresident)
 if __name__ == '__main__':
     app.run(debug=True)
