@@ -3,7 +3,7 @@ from flask import Flask, render_template
 
 app = Flask(__name__)
 loggedIn = True
-runningForPresident = False
+runningForPresident = True
 @app.route('/')
 def index():
     data = {'name':'John','email':'John@gmail.com'}
