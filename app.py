@@ -8,7 +8,7 @@ runningForPresident = False
 def index():
     data = {'name':'John','email':'John@gmail.com'}
     council = True
-    return render_template('index.html', loggedIn = loggedIn, data = data, council = council)
+    return render_template('index.html', loggedIn = loggedIn, data = data, council = council, runningForPresident = runningForPresident)
 @app.route('/signup')
 def signup():
     return render_template('signup.html')
