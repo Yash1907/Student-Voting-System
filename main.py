@@ -15,14 +15,13 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-name = ''
-email = ''
-council = False
-loggedIn = False
-runningForPresident = False
-
 @app.route('/')
 def index():
+    name = ''
+    email = ''
+    council = False
+    loggedIn = False
+    runningForPresident = False
     if('name' in session):
         name = session['name']
     if('email' in session):
@@ -128,6 +127,8 @@ def election():
         else:
             return render_template('election.html',message='Some Other error')        
     else:
+       if('councilMemberCode' not in session):
+           return redirect(url_for('index'))
        return render_template('election.html',loggedIn = True, name=session['name'], email=session['email'], runningForPresident=False)
 
 @app.route('/logout')
