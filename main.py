@@ -129,7 +129,12 @@ def election():
     else:
        if('councilMemberCode' not in session):
            return redirect(url_for('index'))
-       return render_template('election.html',loggedIn = True, name=session['name'], email=session['email'], runningForPresident=False)
+       candidateInfo = candidate.getCandidateInfo({'email':session['email']})
+       if(candidateInfo == None or 'error' in candidateInfo or 'councilMemberCode' not in session):
+            runningForPresident = False
+       else:
+            runningForPresident = True
+       return render_template('election.html',loggedIn = True, name=session['name'], email=session['email'], runningForPresident=runningForPresident)
 
 @app.route('/logout')
 @login_required
