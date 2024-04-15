@@ -34,11 +34,43 @@
           President</button></a>
       {% else %}
       <button type="button" class="btn btn-primary btn-lg px-4">End current election</button>
-      <button type="button" class="btn btn-outline-secondary btn-lg px-4">Start new election</button>
+      <button type="button" class="btn btn-outline-secondary btn-lg px-4" data-bs-toggle="modal" data-bs-target="#electionModal">Start new election</button>
+      <div class="modal fade" id="electionModal" tabindex="-1" aria-labelledby="electionModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="electionModalLabel">Modal title</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form action="{{ url_for('index') }}" method="post">
+                <div class="form-group">
+                  <label for="inputDate">Enter year of election</label>
+                  <input type="number" min="1900" max="2099" step="1" value="{{ year }}" class="form-control" id="inputDate" aria-describedby="year" placeholder="Enter a year">
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Create new election</button>
+            </div>
+          </div>
+        </div>
+      </div>
       {% endif %}
       <a href="/results"><button type="button" class="btn btn-outline-secondary btn-lg px-4">View past results</button></a>
     </div>
   </div>
 </div>
+{% endif %}
+{% if admin %}
+<script>
+  const modal = document.getElementById('electionModal')
+  const input = document.getElementById('myInput')
+
+  modal.addEventListener('shown.bs.modal', () => {
+    myInput.focus()
+  })
+</script>
 {% endif %}
 {% endblock content %}
