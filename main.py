@@ -21,6 +21,7 @@ def index():
     email = ''
     council = False
     loggedIn = False
+    admin = True
     runningForPresident = False
     if('name' in session):
         name = session['name']
@@ -44,7 +45,7 @@ def index():
     voted = False
     if('voted' in session):
       voted = True
-    return render_template('index.html', loggedIn = loggedIn, data = data, voted=voted, council = council, runningForPresident = runningForPresident)
+    return render_template('index.html', loggedIn = loggedIn, data = data, voted=voted, council = council, runningForPresident = runningForPresident, admin = admin)
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -135,6 +136,17 @@ def election():
        else:
             runningForPresident = True
        return render_template('election.html',loggedIn = True, name=session['name'], email=session['email'], runningForPresident=runningForPresident)
+
+@app.route('/results')
+def results():
+    logedIn = False
+    if('email' in session):
+        loggedIn = True
+    # id has to be unique, and the votes have to be ints, rest of it does not really matter
+    results = [{'year':2000,'id':'result2000','votes':[3,2],'names':['max','bob']},
+               {'year':2001,'id':'result2001','votes':[5,7],'names':['bob','max']},
+               {'year':2017,'id':'result2017','votes':[10,7,3],'names':['chris','john','jake']}]
+    return render_template('results.html',results=results, loggedIn = loggedIn)
 
 @app.route('/logout')
 @login_required
