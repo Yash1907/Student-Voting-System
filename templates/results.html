@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block content %}
+{% if not results %}
+<div class="px-4 py-5 my-5 text-center">
+  <h1 class="display-5 fw-bold">There are no past election results!</h1>
+  <div class="col-lg-6 mx-auto">
+    <p class="lead mb-4">Wait for an election to end for results to show up!</p>
+  </div>
+</div>
+{% else %}
+<div class="row my-3 d-flex justify-content-center">
+{% for result in results %}
+<div class="card col-md-4 col-sm-6 col-xs-6 mx-3">
+  <div class="chart-container" style="position: relative;">
+    <div class="card-body">
+      <h5 class="card-title">Votes per candidate in {{result.year}}</h5>
+      <canvas class="card-text" id="{{ result.id }}"></canvas>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  var id = "{{ result.id }}";
+  var ctx = document.getElementById(id);
+  var data = "{{ result.votes }}";
+  data = JSON.parse(data.replace(/'/g, '"'));
+  var candidates = "{{ result.names|safe }}";
+  candidates = JSON.parse(candidates.replace(/'/g, '"'));
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: candidates,
+      datasets: [{
+        label: '# of Votes',
+        data: data,
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      resizeDelay:0.5,
+      indexAxis: 'y',
+      plugins: {
+        legend: {
+          position: 'bottom',
+        },
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        },
+        title: {
+          display: true,
+          text: 'Votes per candidate in {{ result.year }}'
+        }
+      }
+    }
+  });
+</script>
+{% endfor %}
+</div>
+{% endif %}
+{% endblock content %}

@@ -1,7 +1,16 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="chart-container" style="position: relative; height:90vh;">
-  <canvas id="myChart"></canvas>
+<div class="d-flex justify-content-center">
+  <div class="card col-md-4 col-sm-6 col-xs-6 w-75 h-75">
+    <div class="chart-container" style="position: relative;">
+      <div class="card-body">
+        <div class="chart-container" style="position: relative;">
+          <h5 class="card-title">Votes per candidate</h5>
+          <canvas class="card-text" id="myChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -18,7 +27,7 @@
       datasets: [{
         label: '# of Votes',
         data: data,
-        borderWidth: 1
+        borderWidth: 2
       }]
     },
     options: {
@@ -27,7 +36,7 @@
       indexAxis: 'y',
       plugins: {
         legend: {
-          position: 'right',
+          position: 'bottom',
         },
         scales: {
           y: {
