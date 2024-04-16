@@ -26,12 +26,22 @@
     {% endif %}
     <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
       {% if not admin %}
-      <a href="/voting"><button type="button" class="btn btn-primary btn-lg px-4 gap-3">Vote</button></a>
+      {% if electionActive %}
+      <a href="/voting"><button type="button" class="btn btn-primary btn-lg px-4 gap-3 h-100">Vote</button></a>
       <a href="/statistics"><button type="button" class="btn btn-outline-secondary btn-lg px-4">View
           Statistics</button></a>
-      {% elif council and not admin %}
+      {% else %}
+      <button type="button" disabled class="btn btn-primary btn-lg px-4 gap-3">Vote</button>
+      <button type="button" disabled class="btn btn-outline-secondary btn-lg px-4">View Statistics</button>
+      {% endif %}
+      {% if council and not admin %}
+      {% if electionActive %}
       <a href="/runForElection"><button type="button" class="btn btn-outline-secondary btn-lg px-4">Run for
           President</button></a>
+      {% else %}
+      <button type="button" class="btn btn-outline-secondary btn-lg px-4" disabled>Run for President</button>
+      {% endif %}
+      {% endif %}
       {% else %}
       {% if electionActive %}
       <a href="/endElection"><button type="button" class="btn btn-primary btn-lg px-4">End current election</button></a>

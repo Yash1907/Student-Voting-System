@@ -24,30 +24,26 @@ def index():
     admin = False
     runningForPresident = False
     electionActive = False
+    voted = False
+    electionActive = election.isCurrentActiveElection()
     if('name' in session):
         name = session['name']
+    if('voted' in session):
+      voted = True
     if('email' in session):
         email = session['email']
         loggedIn = True
         if(session['email'] == 'admin@voting.com'):
             admin = True
-            electionActive = election.isCurrentActiveElection()
     if('councilMemberCode' in session):
         council = True
         candidateInfo = candidate.getCandidateInfo({'email':session['email']})
-        print('Candidate info printing',candidateInfo)
         if(candidateInfo == None or 'error' in candidateInfo):
             runningForPresident = False
         else:
             runningForPresident = True
-    else:
-        council=False
-        runningForPresident=False
 
     data = {'name':name,'email':email}
-    voted = False
-    if('voted' in session):
-      voted = True
     return render_template('index.html', loggedIn = loggedIn, data = data, voted=voted, council = council, 
                            runningForPresident = runningForPresident, admin = admin, electionActive=electionActive)
 
@@ -86,7 +82,10 @@ def login():
 @app.route('/voting', methods=['GET', 'POST'])
 @login_required
 def voting():
-    voted = True
+    if(not election.isCurrentActiveElection()):
+        flash('No Active Election to Vote!!')
+        return redirect(url_for('index'))    
+    voted = False
     if (request.method == 'POST'):
         retData = vote.vote(request.form)
         flashMessage = 'Some Error Occured!!'
@@ -101,13 +100,16 @@ def voting():
       candidates = candidate.getCandidates()
       if('voted' in session):
           voted = True
-      else:
-          voted=False
+
       return render_template('voting.html',candidates = candidates, voterEmail = session['email'], voted = voted, loggedIn = True)
 
 @app.route('/statistics')
 @login_required
 def statistics():
+    if(not election.isCurrentActiveElection()):
+        flash('No Active Election to show stats!!')
+        return redirect(url_for('index'))
+    
     candidates = candidate.getCandidates()
     votes = []
     names = []
@@ -123,6 +125,12 @@ def statistics():
 @app.route('/runForElection', methods=['GET', 'POST'])
 @login_required
 def runForElection():
+    if(not election.isCurrentActiveElection()):
+        flash('No Active Election to run!!')
+        return redirect(url_for('index'))
+    if('councilMemberCode' not in session):
+        flash('Must be a council member to run!!')
+        return redirect(url_for('index'))        
     if (request.method == 'POST'):
         retData = candidate.runForElection(request.form)
         flashMessage = 'Some Error Occured!!'
