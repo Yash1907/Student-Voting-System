@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="px-4 py-5 my-2">
+  {% if message is defined and message %}
+  <div class="alert alert-warning"> <strong> {{ message }}</strong></div>
+  {% endif %}
+  <form action="{{ url_for('newElection') }}" method="post">
+    <div class="form-group lead mx-auto mb-4">
+      <label for="electionName" class="fw-bold">Election Name</label>
+      <input type="text" class="form-control w-50" id="electionName" aria-describedby="electionName"
+        placeholder="Enter Election Name" name="electionName">
+    </div>
+    <div class="form-group lead mx-auto mb-3">
+      <label for="electionYear" class="fw-bold">electionYear</label>
+      <input type="text" class="form-control w-50" id="electionYear" placeholder="electionYear" name="electionYear">
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+</div>
+{% endblock content %}

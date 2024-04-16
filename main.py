@@ -1,7 +1,7 @@
 from functools import wraps
 import os
 from flask import Flask, redirect, render_template, request,session, url_for, flash
-import useraccount, candidate, vote
+import useraccount, candidate, vote, result, election
 
 
 app = Flask(__name__)
@@ -21,14 +21,17 @@ def index():
     email = ''
     council = False
     loggedIn = False
-    admin = True
+    admin = False
     runningForPresident = False
+    electionActive = False
     if('name' in session):
         name = session['name']
     if('email' in session):
         email = session['email']
         loggedIn = True
-    print('Printing Session',session)
+        if(session['email'] == 'admin@voting.com'):
+            admin = True
+            electionActive = election.isCurrentActiveElection()
     if('councilMemberCode' in session):
         council = True
         candidateInfo = candidate.getCandidateInfo({'email':session['email']})
@@ -45,7 +48,8 @@ def index():
     voted = False
     if('voted' in session):
       voted = True
-    return render_template('index.html', loggedIn = loggedIn, data = data, voted=voted, council = council, runningForPresident = runningForPresident, admin = admin)
+    return render_template('index.html', loggedIn = loggedIn, data = data, voted=voted, council = council, 
+                           runningForPresident = runningForPresident, admin = admin, electionActive=electionActive)
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -85,15 +89,14 @@ def voting():
     voted = True
     if (request.method == 'POST'):
         retData = vote.vote(request.form)
+        flashMessage = 'Some Error Occured!!'
         if('error' in retData):
-            flash(retData['error'])
-            return redirect(url_for('index'))
-        if('message' in retData):
-            flash('Thank you for your vote')
+            flashMessage = retData['error']
+        elif('message' in retData):
+            flashMessage = retData['message']
             session['voted'] = 'yes'
-            return redirect(url_for('index'))        
-        else:
-            return render_template('election.html',message='Some Other error')        
+        flash(flashMessage)
+        return redirect(url_for('index'))
     else:
       candidates = candidate.getCandidates()
       if('voted' in session):
@@ -110,23 +113,25 @@ def statistics():
     names = []
     for x in candidates:
       names.append(x['name'])
-      votes.append(x['votes'])
+      voteCount = 0
+      if('votes' in x):
+          voteCount = x['votes']
+      votes.append(voteCount)
     
     return render_template('statistics.html', votes=votes, names=names, loggedIn = True)
 
-@app.route('/election', methods=['GET', 'POST'])
+@app.route('/runForElection', methods=['GET', 'POST'])
 @login_required
-def election():
+def runForElection():
     if (request.method == 'POST'):
         retData = candidate.runForElection(request.form)
+        flashMessage = 'Some Error Occured!!'
         if('error' in retData):
-            flash(retData['error'])
-            return redirect(url_for('index'))
-        if('message' in retData):
-            flash(retData['message'])
-            return redirect(url_for('index'))        
-        else:
-            return render_template('election.html',message='Some Other error')        
+            flashMessage = retData['error']
+        elif('message' in retData):
+            flashMessage = retData['message']
+        flash(flashMessage)
+        return redirect(url_for('index'))        
     else:
        if('councilMemberCode' not in session):
            return redirect(url_for('index'))
@@ -135,18 +140,70 @@ def election():
             runningForPresident = False
        else:
             runningForPresident = True
-       return render_template('election.html',loggedIn = True, name=session['name'], email=session['email'], runningForPresident=runningForPresident)
+       return render_template('runForElection.html',loggedIn = True, name=session['name'], email=session['email'], runningForPresident=runningForPresident)
 
-@app.route('/results')
+@app.route('/results', methods=['GET'])
+@login_required
 def results():
-    logedIn = False
+    loggedIn = False
     if('email' in session):
         loggedIn = True
     # id has to be unique, and the votes have to be ints, rest of it does not really matter
-    results = [{'year':2000,'id':'result2000','votes':[3,2],'names':['max','bob']},
+    resultsDummy = [{'year':2000,'id':'result2000','votes':[3,2],'names':['max','bob']},
                {'year':2001,'id':'result2001','votes':[5,7],'names':['bob','max']},
                {'year':2017,'id':'result2017','votes':[10,7,3],'names':['chris','john','jake']}]
-    return render_template('results.html',results=results, loggedIn = loggedIn)
+    results = result.getAllResults()
+    resultsOut = []
+    prevElection = ''
+    resultOutObj = {}
+    for resultObj in results:
+        if(prevElection == '' or prevElection != resultObj['electionName']+resultObj['electionYear']):
+            resultOutObj['name'] = resultObj['electionName']
+            resultOutObj['year'] = resultObj['electionYear']
+            resultOutObj['votes'] = []
+            resultOutObj['names'] = []
+            if(prevElection != ''):
+                resultsOut.append(resultOutObj)
+                resultOutObj = {}
+            prevElection = resultObj['electionName']+resultObj['electionYear']
+            resultOutObj['id'] = prevElection
+        resultOutObj['names'].append(resultObj['name'] + ' ' + resultObj['email'] )
+        resultOutObj['votes'].append(resultObj['votes'])        
+    resultsOut.append(resultOutObj)
+    if(len(results) == 0):
+        resultsOut = resultsDummy
+    return render_template('results.html',results=resultsOut, loggedIn = loggedIn)
+
+@app.route('/newElection', methods=['GET','POST'])
+@login_required
+def newElection():
+    flashMessage = 'Some Error Occured!!'
+    if(session['email'] != 'admin@voting.com'):
+        flash('You are not authorized to perform this function')
+        return redirect(url_for('index'))
+
+    retData = election.startNewElection(request.form)
+    if('error' in retData):
+        flashMessage = retData['error']
+    elif('message' in retData):
+        flashMessage = retData['message']
+    flash(flashMessage)
+    return redirect(url_for('index'))
+
+@app.route('/endElection')
+@login_required
+def endElection():
+    if(session['email'] != 'admin@voting.com'):
+        flash('You are not authorized to perform this function')
+        return redirect(url_for('index'))
+    retData = election.endCurrentElection()
+    flashMessage = 'Some Error Occured!!'
+    if('error' in retData):
+        flashMessage = retData['error']
+    elif('message' in retData):
+        flashMessage = retData['message']
+    flash(flashMessage)
+    return redirect(url_for('index'))
 
 @app.route('/logout')
 @login_required
