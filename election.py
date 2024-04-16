@@ -42,4 +42,6 @@ def endCurrentElection():
     retObj = datastore.save('UserAccount',userObj['email'],userObj)
     if('error' in retObj):
       return retObj
+  datastore.save('Election',electionObj['electionName'] + electionObj['electionYear'],
+                 {'electionName':electionObj['electionName'],'electionYear':electionObj['electionYear'],'status':'ended'})
   return {'message':'Current Election Ended!!'}
