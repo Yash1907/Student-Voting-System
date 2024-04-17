@@ -10,7 +10,7 @@ def vote(candidateInfo):
     if(dbUserAcct == None):
       return {'error':'Invalid Voter ' + candidateInfo['voterEmail'] + ' !!'}
     
-    if('voted' in dbUserAcct):
+    if('voted' in dbUserAcct and dbUserAcct['voted'] == 'yes'):
       return {'error':'You have voted already !!'}
     else:
       dbUserAcct['voted'] = 'yes'

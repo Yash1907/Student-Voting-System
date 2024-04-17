@@ -12,9 +12,22 @@ def login(userAccount):
       retObj = {'message':'Login Successful!!', 'name':dbUserAcct['name']}
       if(dbUserAcct['isCouncilMember'] == 'yes'):
         retObj['councilMemberCode'] = dbUserAcct['councilMemberCode']
+      retObj['voted'] = 'no'
+      if('voted' in dbUserAcct):
+        retObj['voted'] = dbUserAcct['voted']
       return retObj
     return {'error':'Login Failed!!'}
 
+def hasVoted(userAccount):
+  if (userAccount == None or 'email' not in userAccount or userAccount['email'] == ''):
+     return {'error':"Email required!!"}  
+  dbUserAcct = datastore.get('UserAccount',userAccount['email'])
+  if(dbUserAcct == None):
+    return {'error':"No User Exists for " + userAccount['email']}
+  if('voted' in dbUserAcct):
+    return {'voted':dbUserAcct['voted']}
+  return {'voted':'no'}
+    
 
 def signup(userAccount):
   if ('name' not in userAccount or 'password' not in userAccount or 'email' not in userAccount or

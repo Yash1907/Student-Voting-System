@@ -26,6 +26,7 @@ def index():
     electionActive = False
     voted = False
     electionActive = election.isCurrentActiveElection()
+    
     if('name' in session):
         name = session['name']
     if('voted' in session):
@@ -35,6 +36,15 @@ def index():
         loggedIn = True
         if(session['email'] == 'admin@voting.com'):
             admin = True
+        hasVoted = useraccount.hasVoted({'email':session['email']})
+        
+        if('voted' in hasVoted and hasVoted['voted'] == 'yes'):
+            session['voted'] = 'yes'
+            voted = True
+        else:
+            session['voted'] = 'no'
+            voted = False            
+            
     if('councilMemberCode' in session):
         council = True
         candidateInfo = candidate.getCandidateInfo({'email':session['email']})
@@ -71,6 +81,7 @@ def login():
         if('message' in retData):
             session['name'] = retData['name']
             session['email'] = request.form['email']
+            session['voted'] = retData['voted']
             if('councilMemberCode' in retData):
                 session['councilMemberCode'] = retData['councilMemberCode']
             return redirect(url_for('index'))
@@ -79,9 +90,9 @@ def login():
     else:
        return render_template('login.html')    
 
-@app.route('/voting', methods=['GET', 'POST'])
+@app.route('/castVote', methods=['GET', 'POST'])
 @login_required
-def voting():
+def castVote():
     if(not election.isCurrentActiveElection()):
         flash('No Active Election to Vote!!')
         return redirect(url_for('index'))    
@@ -98,7 +109,7 @@ def voting():
         return redirect(url_for('index'))
     else:
       candidates = candidate.getCandidates()
-      if('voted' in session):
+      if('voted' in session and session['voted'] == 'yes'):
           voted = True
 
       return render_template('voting.html',candidates = candidates, voterEmail = session['email'], voted = voted, loggedIn = True)
@@ -166,16 +177,16 @@ def results():
     resultOutObj = {}
     for resultObj in results:
         if(prevElection == '' or prevElection != resultObj['electionName']+resultObj['electionYear']):
+            if(prevElection != ''):
+                resultsOut.append(resultOutObj)
+                resultOutObj = {}            
             resultOutObj['name'] = resultObj['electionName']
             resultOutObj['year'] = resultObj['electionYear']
             resultOutObj['votes'] = []
             resultOutObj['names'] = []
-            if(prevElection != ''):
-                resultsOut.append(resultOutObj)
-                resultOutObj = {}
             prevElection = resultObj['electionName']+resultObj['electionYear']
             resultOutObj['id'] = prevElection
-        resultOutObj['names'].append(resultObj['name'] + ' ' + resultObj['email'] )
+        resultOutObj['names'].append(resultObj['name'])
         resultOutObj['votes'].append(resultObj['votes'])        
     resultsOut.append(resultOutObj)
     if(len(results) == 0):

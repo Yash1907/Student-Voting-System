@@ -7,7 +7,7 @@
       <h5 class="card-title">{{candidate.name}}</h5>
       <h6 class="card-subtitle mb-2 text-muted">{{candidate.position}}</h6>
       <p class="card-text">{{candidate.slogan}}</p>
-      <form action="{{ url_for('voting') }}" method="post">
+      <form action="{{ url_for('castVote') }}" method="post">
         <input type="hidden" name="email" value={{candidate.email}} />
         <input type="hidden" name="voterEmail" value={{voterEmail}} />
         {% if voted %}

@@ -4,7 +4,7 @@ import result
 
 def getCurrentActiveElection():
   query = gcDS.Client().query(kind='Election')
-  query.add_filter('status','=','active')
+  query.add_filter(filter=gcDS.query.PropertyFilter('status','=','active'))
   return list(query.fetch())
 
 def isCurrentActiveElection():
